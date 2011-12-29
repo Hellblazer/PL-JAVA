@@ -1,0 +1,8 @@
+PL/JAVA is a maven library for the Pl/Java runtime, including a Maven plugin for generating the sql for installing PL/Java functions, triggers and proceedures from annotated Java source.
+
+This project is licensed under the BSD 3-Clause License:
+    http://www.opensource.org/licenses/BSD-3-Clause
+    
+PL/Java is built using Maven 3.x.  You can build the project by cd'ing into the top level directory and:
+
+    $ mvn clean install
