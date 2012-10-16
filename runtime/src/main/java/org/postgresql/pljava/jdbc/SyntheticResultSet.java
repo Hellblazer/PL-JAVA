@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Synthetic ResultSet that provides direct access to data stored
@@ -109,4 +110,24 @@ public class SyntheticResultSet extends ResultSetBase
 	{
 		return new SyntheticResultSetMetaData(m_fields);
 	}
+
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(int, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(java.lang.String, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type)
+                                                             throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

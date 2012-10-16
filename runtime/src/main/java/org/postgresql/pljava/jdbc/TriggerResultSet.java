@@ -10,6 +10,7 @@ package org.postgresql.pljava.jdbc;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.postgresql.pljava.internal.Tuple;
 import org.postgresql.pljava.internal.TupleDesc;
@@ -151,6 +152,25 @@ public class TriggerResultSet extends SingleRowResultSet
 	{
 		return m_tupleChanges == null;
 	}
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(int, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(java.lang.String, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type)
+                                                             throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 	// ************************************************************
 	// End of implementation of JDBC 4 methods.

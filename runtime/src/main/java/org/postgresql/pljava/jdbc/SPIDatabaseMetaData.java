@@ -3544,4 +3544,25 @@ public class SPIDatabaseMetaData implements DatabaseMetaData
 			"SPIDatabaseMetadata.unwrap( Class< T > ) not implemented yet.", "0A000" );
 
 	}
+
+    /* (non-Javadoc)
+     * @see java.sql.DatabaseMetaData#getPseudoColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public ResultSet getPseudoColumns(String catalog, String schemaPattern,
+                                      String tableNamePattern,
+                                      String columnNamePattern)
+                                                               throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.DatabaseMetaData#generatedKeyAlwaysReturned()
+     */
+    @Override
+    public boolean generatedKeyAlwaysReturned() throws SQLException {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

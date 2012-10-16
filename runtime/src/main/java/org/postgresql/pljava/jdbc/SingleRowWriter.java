@@ -69,7 +69,7 @@ public class SingleRowWriter extends SingleRowResultSet
 		if(x == null)
 			m_values[columnIndex-1] = x;
 
-		Class c = m_tupleDesc.getColumnClass(columnIndex);
+		Class<?> c = m_tupleDesc.getColumnClass(columnIndex);
 		if(!c.isInstance(x)
 		&& !(c == byte[].class && (x instanceof BlobValue)))
 		{
@@ -154,7 +154,26 @@ public class SingleRowWriter extends SingleRowResultSet
 	public int getHoldability()
 	{
 		return ResultSet.CLOSE_CURSORS_AT_COMMIT;
-	}
+	} 
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(int, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(java.lang.String, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type)
+                                                             throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 	// ************************************************************
 	// End of implementation of JDBC 4 methods.

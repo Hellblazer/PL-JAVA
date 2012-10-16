@@ -449,5 +449,23 @@ public class SPIStatement implements Statement
 		  + ".unwrapClass( Class<T> ) not implemented yet.",
 		  "0A000" );
 	}
+
+    /* (non-Javadoc)
+     * @see java.sql.Statement#closeOnCompletion()
+     */
+    @Override
+    public void closeOnCompletion() throws SQLException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Statement#isCloseOnCompletion()
+     */
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
 

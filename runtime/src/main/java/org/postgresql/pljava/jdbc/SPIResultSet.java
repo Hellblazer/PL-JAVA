@@ -6,15 +6,16 @@
  */
 package org.postgresql.pljava.jdbc;
 
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSetMetaData;
+import java.util.Map;
 
 import org.postgresql.pljava.internal.Portal;
 import org.postgresql.pljava.internal.SPI;
-import org.postgresql.pljava.internal.TupleTable;
 import org.postgresql.pljava.internal.Tuple;
 import org.postgresql.pljava.internal.TupleDesc;
+import org.postgresql.pljava.internal.TupleTable;
 
 /**
  * A Read-only ResultSet that provides direct access to a {@link
@@ -190,4 +191,24 @@ public class SPIResultSet extends ResultSetBase
 	{
 		return new SPIResultSetMetaData(m_tupleDesc);
 	}
+
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(int, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.ResultSet#getObject(java.lang.String, java.lang.Class)
+     */
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type)
+                                                             throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

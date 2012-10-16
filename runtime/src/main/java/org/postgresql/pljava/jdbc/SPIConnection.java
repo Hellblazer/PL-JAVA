@@ -40,9 +40,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import org.postgresql.pljava.internal.Oid;
 import org.postgresql.pljava.internal.PgSavepoint;
 
@@ -1027,4 +1029,51 @@ public class SPIConnection implements Connection
 		}
 		return _clientInfo;
 	}
+ 
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#setSchema(java.lang.String)
+     */
+    @Override
+    public void setSchema(String schema) throws SQLException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#getSchema()
+     */
+    @Override
+    public String getSchema() throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#abort(java.util.concurrent.Executor)
+     */
+    @Override
+    public void abort(Executor executor) throws SQLException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#setNetworkTimeout(java.util.concurrent.Executor, int)
+     */
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds)
+                                                                      throws SQLException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#getNetworkTimeout()
+     */
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }	
