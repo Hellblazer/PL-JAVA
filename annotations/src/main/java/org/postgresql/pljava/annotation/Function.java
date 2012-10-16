@@ -16,26 +16,35 @@ import java.lang.annotation.Target;
  * @author Thomas Hallgren
  */
 @Documented
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Function
-{
-	public enum OnNullInput { CALLED, RETURNS_NULL };
+@Target({ ElementType.METHOD })
+@Retention(RetentionPolicy.CLASS)
+public @interface Function {
+    public enum OnNullInput {
+        CALLED, RETURNS_NULL
+    };
 
-	public enum Security { INVOKER, DEFINER };
+    public enum Security {
+        INVOKER, DEFINER
+    };
 
-	public enum Type { IMMUTABLE, STABLE, VOLATILE };
+    public enum Type {
+        IMMUTABLE, STABLE, VOLATILE
+    };
 
-	String name() default "";
-	String language() default "java";
-	String schema() default "";
+    String name() default "";
 
-	OnNullInput onNullInput() default OnNullInput.RETURNS_NULL;
-	Security security() default Security.INVOKER;
-	Type type() default Type.VOLATILE;
+    String language() default "java";
 
-	/**
-	 * The Triggers that will call this function (if any).
-	 */
-	Trigger[] triggers() default {};
+    String schema() default "";
+
+    OnNullInput onNullInput() default OnNullInput.RETURNS_NULL;
+
+    Security security() default Security.INVOKER;
+
+    Type type() default Type.VOLATILE;
+
+    /**
+     * The Triggers that will call this function (if any).
+     */
+    Trigger[] triggers() default {};
 }

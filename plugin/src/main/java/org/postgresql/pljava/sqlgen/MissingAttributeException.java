@@ -9,10 +9,10 @@ package org.postgresql.pljava.sqlgen;
 /**
  * @author Thomas Hallgren
  */
-public class MissingAttributeException extends RuntimeException
-{
-	MissingAttributeException(String attributeName)
-	{
-		super("The required attribute " + attributeName + " has no value");
-	}
+public class MissingAttributeException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    MissingAttributeException(String attributeName) {
+        super("The required attribute " + attributeName + " has no value");
+    }
 }

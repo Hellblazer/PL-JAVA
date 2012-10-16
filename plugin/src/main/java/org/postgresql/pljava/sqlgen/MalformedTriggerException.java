@@ -9,12 +9,11 @@ package org.postgresql.pljava.sqlgen;
 /**
  * @author Thomas Hallgren
  */
-public class MalformedTriggerException extends RuntimeException
-{
-	MalformedTriggerException(FunctionVisitor function)
-	{
-		super("Function " + function.getClassName() +
-			'.' + function.getMethodName() +
-			" is not a valid trigger function");
-	}
+public class MalformedTriggerException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    MalformedTriggerException(FunctionVisitor function) {
+        super("Function " + function.getClassName() + '.'
+              + function.getMethodName() + " is not a valid trigger function");
+    }
 }

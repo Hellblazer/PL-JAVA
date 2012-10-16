@@ -14,37 +14,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.EmptyVisitor;
 import org.postgresql.pljava.annotation.Function;
 
 /**
  * @author Thomas Hallgren
  */
-public class PLJavaClassVisitor extends ClassVisitor {
-    private final String                     FUNCTION    = Type.getDescriptor(Function.class);
+public class PLJavaClassVisitor extends EmptyVisitor {
+    class MethodHandler extends EmptyVisitor {
+        private final String m_descriptor;
 
-    private final ArrayList<FunctionVisitor> m_functions = new ArrayList<FunctionVisitor>();
-
-    private String                           m_className;
-
-    class MethodHandler extends MethodVisitor {
         private final String m_name;
 
         private final String m_signature;
 
-        private final String m_descriptor;
-
         MethodHandler(String name, String descriptor, String signature) {
-            super(Opcodes.ASM4);
             m_name = name;
             m_signature = signature;
             m_descriptor = descriptor;
         }
 
+        @Override
         public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
             if (FUNCTION.equals(desc)) {
                 FunctionVisitor function = new FunctionVisitor(m_className,
@@ -61,33 +54,13 @@ public class PLJavaClassVisitor extends ClassVisitor {
         }
     }
 
+    private final String                     FUNCTION    = Type.getDescriptor(Function.class);
+
+    private String                           m_className;
+
+    private final ArrayList<FunctionVisitor> m_functions = new ArrayList<FunctionVisitor>();
+
     public PLJavaClassVisitor() {
-        super(Opcodes.ASM4);
-    }
-
-    public void visit(int version, int access, String name, String signature,
-                      String superName, String[] interfaces) {
-        m_className = name.replace('/', '.');
-    }
-
-    public FieldVisitor visitField(int access, String name, String desc,
-                                   String signature, Object value) {
-        return null;
-    }
-
-    public MethodVisitor visitMethod(int access, String name, String desc,
-                                     String signature, String[] exceptions) {
-        // Where' only interested in methods declared as public and static.
-        //
-        return ((access & ACC_STATIC) != 0 && (access & ACC_PUBLIC) != 0) ? new MethodHandler(
-                                                                                              name,
-                                                                                              desc,
-                                                                                              signature)
-                                                                         : null;
-    }
-
-    public final List<FunctionVisitor> getFunctions() {
-        return m_functions;
     }
 
     public void emitOn(PrintWriter writer) {
@@ -95,5 +68,33 @@ public class PLJavaClassVisitor extends ClassVisitor {
             function.emitOn(writer);
             writer.println(";");
         }
+    }
+
+    public final List<FunctionVisitor> getFunctions() {
+        return m_functions;
+    }
+
+    @Override
+    public void visit(int version, int access, String name, String signature,
+                      String superName, String[] interfaces) {
+        m_className = name.replace('/', '.');
+    }
+
+    @Override
+    public FieldVisitor visitField(int access, String name, String desc,
+                                   String signature, Object value) {
+        return null;
+    }
+
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String desc,
+                                     String signature, String[] exceptions) {
+        // Where' only interested in methods declared as public and static.
+        //
+        return (access & ACC_STATIC) != 0 && (access & ACC_PUBLIC) != 0 ? new MethodHandler(
+                                                                                            name,
+                                                                                            desc,
+                                                                                            signature)
+                                                                       : null;
     }
 }

@@ -23,77 +23,70 @@ import org.postgresql.pljava.SessionManager;
 /**
  * @author Thomas Hallgren
  */
-public class UsingProperties implements ResultSetProvider, PooledObject
-{
-	private static Logger s_logger = Logger.getAnonymousLogger();
-	private final Properties m_properties;
-	private final ObjectPool m_pool;
+public class UsingProperties implements ResultSetProvider, PooledObject {
+    private static Logger s_logger = Logger.getAnonymousLogger();
 
-	private Iterator m_propertyIterator;
+    public static ResultSetProvider getProperties() throws SQLException {
+        ObjectPool pool = SessionManager.current().getObjectPool(UsingProperties.class);
+        return (ResultSetProvider) pool.activateInstance();
+    }
 
-	public UsingProperties(ObjectPool pool)
-	throws IOException
-	{
-		m_pool = pool;
-		m_properties = new Properties();
+    private final ObjectPool m_pool;
 
-		s_logger.info("** UsingProperties()");
-		InputStream propStream = this.getClass().getResourceAsStream("example.properties");
-		if(propStream == null)
-		{
-			s_logger.info("example.properties was null");
-		}
-		else
-		{
-			m_properties.load(propStream);
-			propStream.close();
-			s_logger.info("example.properties has " + m_properties.size() + " entries");
-		}
-	}
+    private final Properties m_properties;
 
-	public void activate()
-	{
-		s_logger.info("** UsingProperties.activate()");
-		m_propertyIterator = m_properties.entrySet().iterator();
-	}
+    private Iterator<?>      m_propertyIterator;
 
-	public void remove()
-	{
-		s_logger.info("** UsingProperties.remove()");
-		m_properties.clear();
-	}
+    public UsingProperties(ObjectPool pool) throws IOException {
+        m_pool = pool;
+        m_properties = new Properties();
 
-	public void passivate()
-	{
-		s_logger.info("** UsingProperties.passivate()");
-		m_propertyIterator = null;
-	}
+        s_logger.info("** UsingProperties()");
+        InputStream propStream = this.getClass().getResourceAsStream("example.properties");
+        if (propStream == null) {
+            s_logger.info("example.properties was null");
+        } else {
+            m_properties.load(propStream);
+            propStream.close();
+            s_logger.info("example.properties has " + m_properties.size()
+                          + " entries");
+        }
+    }
 
-	public boolean assignRowValues(ResultSet receiver, int currentRow)
-			throws SQLException
-	{
-		if(!m_propertyIterator.hasNext())
-		{
-			s_logger.fine("no more rows, returning false");
-			return false;
-		}
-		Map.Entry propEntry = (Map.Entry)m_propertyIterator.next();
-		receiver.updateString(1, (String)propEntry.getKey());
-		receiver.updateString(2, (String)propEntry.getValue());
-		// s_logger.fine("next row created, returning true");
-		return true;
-	}
+    @Override
+    public void activate() {
+        s_logger.info("** UsingProperties.activate()");
+        m_propertyIterator = m_properties.entrySet().iterator();
+    }
 
-	public void close()
-	throws SQLException
-	{
-		m_pool.passivateInstance(this);
-	}
+    @Override
+    public boolean assignRowValues(ResultSet receiver, int currentRow)
+                                                                      throws SQLException {
+        if (!m_propertyIterator.hasNext()) {
+            s_logger.fine("no more rows, returning false");
+            return false;
+        }
+        Map.Entry<?, ?> propEntry = (Map.Entry<?, ?>) m_propertyIterator.next();
+        receiver.updateString(1, (String) propEntry.getKey());
+        receiver.updateString(2, (String) propEntry.getValue());
+        // s_logger.fine("next row created, returning true");
+        return true;
+    }
 
-	public static ResultSetProvider getProperties()
-	throws SQLException
-	{
-		ObjectPool pool = SessionManager.current().getObjectPool(UsingProperties.class);
-		return (ResultSetProvider)pool.activateInstance();
-	}
+    @Override
+    public void close() throws SQLException {
+        m_pool.passivateInstance(this);
+    }
+
+    @Override
+    public void passivate() {
+        s_logger.info("** UsingProperties.passivate()");
+        m_propertyIterator = null;
+    }
+
+    @Override
+    public void remove() {
+        s_logger.info("** UsingProperties.remove()");
+        m_properties.clear();
+    }
 }

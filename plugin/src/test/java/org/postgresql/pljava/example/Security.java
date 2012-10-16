@@ -10,26 +10,20 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class Security
-{
-	/**
-	 * The following method should fail if the language in use
-	 * is untrusted.
-	 * @return The name of a created temporary file.
-	 * @throws SQLException
-	 */
-	public static String createTempFile()
-	throws SQLException
-	{
-		try
-		{
-			File tmp = File.createTempFile("pljava", ".test");
-			tmp.deleteOnExit();
-			return tmp.getAbsolutePath();
-		}
-		catch(IOException e)
-		{
-			throw new SQLException(e.getMessage());
-		}
-	}
+public class Security {
+    /**
+     * The following method should fail if the language in use is untrusted.
+     * 
+     * @return The name of a created temporary file.
+     * @throws SQLException
+     */
+    public static String createTempFile() throws SQLException {
+        try {
+            File tmp = File.createTempFile("pljava", ".test");
+            tmp.deleteOnExit();
+            return tmp.getAbsolutePath();
+        } catch (IOException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
 }

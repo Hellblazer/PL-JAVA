@@ -11,41 +11,37 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-public class RandomInts implements Iterator
-{
-	private final int m_rowCount;
-	private final Random m_random;
-	private int m_currentRow;
+public class RandomInts implements Iterator<Object> {
+    public static Iterator<?> createIterator(int rowCount) throws SQLException {
+        return new RandomInts(rowCount);
+    }
 
-	public static Iterator createIterator(int rowCount)
-	throws SQLException
-	{
-		return new RandomInts(rowCount);
-	}
+    private int          m_currentRow;
+    private final Random m_random;
 
-	public RandomInts(int rowCount) throws SQLException
-	{
-		m_rowCount = rowCount;
-		m_random = new Random(System.currentTimeMillis());
-	}
+    private final int    m_rowCount;
 
-	public boolean hasNext()
-	{
-		return m_currentRow < m_rowCount;
-	}
+    public RandomInts(int rowCount) throws SQLException {
+        m_rowCount = rowCount;
+        m_random = new Random(System.currentTimeMillis());
+    }
 
-	public Object next()
-	{
-		if(m_currentRow < m_rowCount)
-		{
-			++m_currentRow;
-			return new Integer(m_random.nextInt());
-		}
-		throw new NoSuchElementException();
-	}
+    @Override
+    public boolean hasNext() {
+        return m_currentRow < m_rowCount;
+    }
 
-	public void remove()
-	{
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Object next() {
+        if (m_currentRow < m_rowCount) {
+            ++m_currentRow;
+            return new Integer(m_random.nextInt());
+        }
+        throw new NoSuchElementException();
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
 }

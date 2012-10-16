@@ -6,11 +6,15 @@
  */
 package org.postgresql.pljava.example;
 
-import java.sql.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
@@ -19,96 +23,85 @@ import org.postgresql.pljava.ResultSetProvider;
 /**
  * @author Filip Hrbek
  */
-public class MetaDataInts implements ResultSetProvider
-{
-	String[] methodNames;
+public class MetaDataInts implements ResultSetProvider {
+    public static ResultSetProvider getDatabaseMetaDataInts()
+                                                             throws SQLException {
+        try {
+            return new MetaDataInts();
+        } catch (SQLException e) {
+            throw new SQLException("Error reading DatabaseMetaData",
+                                   e.getMessage());
+        }
+    }
 
-	Integer[] methodResults;
+    String[]  methodNames;
 
-	public MetaDataInts() throws SQLException
-	{
-		Logger log = Logger.getAnonymousLogger();
+    Integer[] methodResults;
 
-		class MethodComparator implements Comparator
-		{
-			public int compare(Object a, Object b)
-			{
-				return ((Method)a).getName().compareTo(((Method)b).getName());
-			}
-		}
+    public MetaDataInts() throws SQLException {
+        Logger log = Logger.getAnonymousLogger();
 
-		Connection conn = DriverManager
-			.getConnection("jdbc:default:connection");
-		DatabaseMetaData md = conn.getMetaData();
-		Method[] m = DatabaseMetaData.class.getMethods();
-		Arrays.sort(m, new MethodComparator());
-		Class prototype[];
-		Class returntype;
-		Object[] args = new Object[0];
-		Integer result = null;
-		ArrayList mn = new ArrayList();
-		ArrayList mr = new ArrayList();
+        class MethodComparator implements Comparator<Object> {
+            @Override
+            public int compare(Object a, Object b) {
+                return ((Method) a).getName().compareTo(((Method) b).getName());
+            }
+        }
 
-		for(int i = 0; i < m.length; i++)
-		{
-			prototype = m[i].getParameterTypes();
-			if(prototype.length > 0)
-				continue;
+        Connection conn = DriverManager.getConnection("jdbc:default:connection");
+        DatabaseMetaData md = conn.getMetaData();
+        Method[] m = DatabaseMetaData.class.getMethods();
+        Arrays.sort(m, new MethodComparator());
+        Class<?> prototype[];
+        Class<?> returntype;
+        Object[] args = new Object[0];
+        Integer result = null;
+        ArrayList<String> mn = new ArrayList<String>();
+        ArrayList<Integer> mr = new ArrayList<Integer>();
 
-			returntype = m[i].getReturnType();
-			if(!returntype.equals(int.class))
-				continue;
+        for (Method element : m) {
+            prototype = element.getParameterTypes();
+            if (prototype.length > 0) {
+                continue;
+            }
 
-			try
-			{
-				result = (Integer)m[i].invoke(md, args);
-			}
-			catch(InvocationTargetException e)
-			{
-				log.info("Method: " + m[i].getName() + " => " + e.getTargetException().getMessage());
-				result = new Integer(-1);
-			}
-			catch(Exception e)
-			{
-				log.info("Method: " + m[i].getName() + " => " + e.getMessage());
-				result = new Integer(-1);
-			}
+            returntype = element.getReturnType();
+            if (!returntype.equals(int.class)) {
+                continue;
+            }
 
-			mn.add(m[i].getName());
-			mr.add(result);
-		}
+            try {
+                result = (Integer) element.invoke(md, args);
+            } catch (InvocationTargetException e) {
+                log.info("Method: " + element.getName() + " => "
+                         + e.getTargetException().getMessage());
+                result = new Integer(-1);
+            } catch (Exception e) {
+                log.info("Method: " + element.getName() + " => "
+                         + e.getMessage());
+                result = new Integer(-1);
+            }
 
-		methodNames = (String[])mn.toArray(new String[mn.size()]);
-		methodResults = (Integer[])mr.toArray(new Integer[mr.size()]);
-	}
+            mn.add(element.getName());
+            mr.add(result);
+        }
 
-	public boolean assignRowValues(ResultSet receiver, int currentRow)
-	throws SQLException
-	{
-		if(currentRow < methodNames.length)
-		{
-			receiver.updateString(1, methodNames[currentRow]);
-			receiver.updateInt(2, methodResults[currentRow].intValue());
-			return true;
-		}
-		return false;
-	}
+        methodNames = mn.toArray(new String[mn.size()]);
+        methodResults = mr.toArray(new Integer[mr.size()]);
+    }
 
-	public void close()
-	{
-	}
+    @Override
+    public boolean assignRowValues(ResultSet receiver, int currentRow)
+                                                                      throws SQLException {
+        if (currentRow < methodNames.length) {
+            receiver.updateString(1, methodNames[currentRow]);
+            receiver.updateInt(2, methodResults[currentRow].intValue());
+            return true;
+        }
+        return false;
+    }
 
-	public static ResultSetProvider getDatabaseMetaDataInts()
-	throws SQLException
-	{
-		try
-		{
-			return new MetaDataInts();
-		}
-		catch(SQLException e)
-		{
-			throw new SQLException("Error reading DatabaseMetaData", e
-				.getMessage());
-		}
-	}
+    @Override
+    public void close() {
+    }
 }

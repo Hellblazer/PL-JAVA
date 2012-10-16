@@ -14,30 +14,26 @@ import java.sql.SQLException;
 
 import org.postgresql.pljava.ResultSetHandle;
 
-public class SetOfRecordTest implements ResultSetHandle
-{
-	private final PreparedStatement m_statement;
+public class SetOfRecordTest implements ResultSetHandle {
+    public static ResultSetHandle executeSelect(String selectSQL)
+                                                                 throws SQLException {
+        return new SetOfRecordTest(selectSQL);
+    }
 
-	public static ResultSetHandle executeSelect(String selectSQL)
-	throws SQLException
-	{
-		return new SetOfRecordTest(selectSQL);
-	}
+    private final PreparedStatement m_statement;
 
-	public SetOfRecordTest(String selectSQL) throws SQLException
-	{
-		Connection conn = DriverManager
-			.getConnection("jdbc:default:connection");
-		m_statement = conn.prepareStatement(selectSQL);
-	}
+    public SetOfRecordTest(String selectSQL) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:default:connection");
+        m_statement = conn.prepareStatement(selectSQL);
+    }
 
-	public void close() throws SQLException
-	{
-		m_statement.close();
-	}
+    @Override
+    public void close() throws SQLException {
+        m_statement.close();
+    }
 
-	public ResultSet getResultSet() throws SQLException
-	{
-		return m_statement.executeQuery();
-	}
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        return m_statement.executeQuery();
+    }
 }

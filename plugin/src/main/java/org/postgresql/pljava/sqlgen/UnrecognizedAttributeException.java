@@ -9,10 +9,10 @@ package org.postgresql.pljava.sqlgen;
 /**
  * @author Thomas Hallgren
  */
-public class UnrecognizedAttributeException extends IllegalArgumentException
-{
-	UnrecognizedAttributeException(String attributeName)
-	{
-		super("The attribute " + attributeName + " is not recognized");
-	}
+public class UnrecognizedAttributeException extends IllegalArgumentException {
+    private static final long serialVersionUID = 1L;
+
+    UnrecognizedAttributeException(String attributeName) {
+        super("The attribute " + attributeName + " is not recognized");
+    }
 }

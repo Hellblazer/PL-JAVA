@@ -18,26 +18,22 @@ import java.util.Iterator;
 /**
  * @author Filip Hrbek
  */
-public class ResultSetTest
-{
-	public static Iterator executeSelect(String selectSQL) throws SQLException
-	{
-        if (!selectSQL.toUpperCase().trim().startsWith("SELECT "))
-        {
+public class ResultSetTest {
+    public static Iterator<String> executeSelect(String selectSQL)
+                                                                  throws SQLException {
+        if (!selectSQL.toUpperCase().trim().startsWith("SELECT ")) {
             throw new SQLException("Not a SELECT statement");
         }
 
-		return new ResultSetTest(selectSQL).iterator();
-	}
+        return new ResultSetTest(selectSQL).iterator();
+    }
 
-	private ArrayList m_results;
+    private ArrayList<String> m_results;
 
-	public ResultSetTest(String selectSQL) throws SQLException
-	{
-		Connection conn = DriverManager
-			.getConnection("jdbc:default:connection");
-		m_results = new ArrayList();
-		StringBuffer result;
+    public ResultSetTest(String selectSQL) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:default:connection");
+        m_results = new ArrayList<String>();
+        StringBuffer result;
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(selectSQL);
@@ -45,41 +41,34 @@ public class ResultSetTest
 
         int cnt = rsmd.getColumnCount();
         result = new StringBuffer();
-        for (int i=1; i <= cnt; i++)
-        {
-            result.append(
-                (rsmd.getColumnName(i) +
-                "(" + rsmd.getColumnClassName(i) + ")"
-                )
-                .replaceAll("(\\\\|;)","\\$1") + ";");
+        for (int i = 1; i <= cnt; i++) {
+            result.append((rsmd.getColumnName(i) + "("
+                           + rsmd.getColumnClassName(i) + ")").replaceAll("(\\\\|;)",
+                                                                          "\\$1")
+                          + ";");
         }
         m_results.add(result.toString());
 
-        while (rs.next())
-        {
+        while (rs.next()) {
             result = new StringBuffer();
             Object rsObject = null;
-            for(int i=1; i <= cnt; i++)
-            {
+            for (int i = 1; i <= cnt; i++) {
                 rsObject = rs.getObject(i);
-                if (rsObject == null)
-                {
+                if (rsObject == null) {
                     rsObject = "<NULL>";
                 }
-                result.append(rsObject.toString()
-                    .replaceAll("(\\\\|;)","\\$1") + ";");
+                result.append(rsObject.toString().replaceAll("(\\\\|;)", "\\$1")
+                              + ";");
             }
             m_results.add(result.toString());
         }
         rs.close();
-	}
+    }
 
-	private Iterator iterator()
-	{
-		return m_results.iterator();
-	}
+    public void close() {
+    }
 
-	public void close()
-	{
-	}
+    private Iterator<String> iterator() {
+        return m_results.iterator();
+    }
 }

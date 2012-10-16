@@ -15,39 +15,36 @@ import java.sql.SQLException;
 
 import org.postgresql.pljava.ResultSetProvider;
 
-public class BinaryColumnTest implements ResultSetProvider
-{
-	public boolean assignRowValues(ResultSet rs, int rowCount)
-	throws SQLException
-	{
-		try
-		{
-			if(rowCount >= 100)
-				return false;
+public class BinaryColumnTest implements ResultSetProvider {
+    public static ResultSetProvider getBinaryPairs() {
+        return new BinaryColumnTest();
+    }
 
-			int offset = rowCount * 100;
-			ByteArrayOutputStream bld = new ByteArrayOutputStream();
-			DataOutputStream da = new DataOutputStream(bld);
-			for(int idx = 0; idx < 100; ++idx)
-				da.writeInt(offset + idx);
-			byte[] bytes = bld.toByteArray();
-			ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-			rs.updateBinaryStream(1, input, bytes.length);
-			rs.updateBytes(2, bytes);
-			return true;
-		}
-		catch(IOException e)
-		{
-			throw new SQLException(e.getMessage());
-		}
-	}
+    @Override
+    public boolean assignRowValues(ResultSet rs, int rowCount)
+                                                              throws SQLException {
+        try {
+            if (rowCount >= 100) {
+                return false;
+            }
 
-	public void close() throws SQLException
-	{
-	}
+            int offset = rowCount * 100;
+            ByteArrayOutputStream bld = new ByteArrayOutputStream();
+            DataOutputStream da = new DataOutputStream(bld);
+            for (int idx = 0; idx < 100; ++idx) {
+                da.writeInt(offset + idx);
+            }
+            byte[] bytes = bld.toByteArray();
+            ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+            rs.updateBinaryStream(1, input, bytes.length);
+            rs.updateBytes(2, bytes);
+            return true;
+        } catch (IOException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
 
-	public static ResultSetProvider getBinaryPairs()
-	{
-		return new BinaryColumnTest();
-	}
+    @Override
+    public void close() throws SQLException {
+    }
 }

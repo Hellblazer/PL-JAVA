@@ -37,8 +37,8 @@ import java.lang.annotation.Target;
  * 
  */
 @Documented
-@Target({ ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ComplexType { 
-    Property[] properties();
+@Target({ ElementType.PARAMETER })
+@Retention(RetentionPolicy.CLASS)
+public @interface ComplexType {
+    String type();
 }

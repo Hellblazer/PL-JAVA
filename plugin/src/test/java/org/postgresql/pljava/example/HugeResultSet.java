@@ -14,40 +14,38 @@ import java.util.logging.Logger;
 
 import org.postgresql.pljava.ResultSetProvider;
 
-public class HugeResultSet implements ResultSetProvider
-{
-	private final int m_rowCount;
-	private final Random m_random;
+public class HugeResultSet implements ResultSetProvider {
+    public static ResultSetProvider executeSelect(int rowCount)
+                                                               throws SQLException {
+        return new HugeResultSet(rowCount);
+    }
 
-	public static ResultSetProvider executeSelect(int rowCount)
-	throws SQLException
-	{
-		return new HugeResultSet(rowCount);
-	}
+    private final Random m_random;
 
-	public HugeResultSet(int rowCount) throws SQLException
-	{
-		m_rowCount = rowCount;
-		m_random = new Random(System.currentTimeMillis());
-	}
+    private final int    m_rowCount;
 
-	public boolean assignRowValues(ResultSet receiver, int currentRow)
-	throws SQLException
-	{
-		// Stop when we reach rowCount rows.
-		//
-		if(currentRow >= m_rowCount)
-		{
-			Logger.getAnonymousLogger().info("HugeResultSet ends");
-			return false;
-		}
+    public HugeResultSet(int rowCount) throws SQLException {
+        m_rowCount = rowCount;
+        m_random = new Random(System.currentTimeMillis());
+    }
 
-		receiver.updateInt(1, currentRow);
-		receiver.updateInt(2, m_random.nextInt());
-		receiver.updateTimestamp(3, new Timestamp(System.currentTimeMillis()));
-		return true;
-	}
+    @Override
+    public boolean assignRowValues(ResultSet receiver, int currentRow)
+                                                                      throws SQLException {
+        // Stop when we reach rowCount rows.
+        //
+        if (currentRow >= m_rowCount) {
+            Logger.getAnonymousLogger().info("HugeResultSet ends");
+            return false;
+        }
 
-	public void close()
-	{}
+        receiver.updateInt(1, currentRow);
+        receiver.updateInt(2, m_random.nextInt());
+        receiver.updateTimestamp(3, new Timestamp(System.currentTimeMillis()));
+        return true;
+    }
+
+    @Override
+    public void close() {
+    }
 }

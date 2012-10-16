@@ -19,87 +19,85 @@ import org.objectweb.asm.Type;
  * @author Thomas Hallgren
  */
 
-public class TypeMapper
-{
-	private static final TypeMapper s_singleton = new TypeMapper();
+public class TypeMapper {
+    private static final TypeMapper s_singleton = new TypeMapper();
 
-	private final HashMap<String, String> m_typeMap = new HashMap<String, String>();
+    public static TypeMapper getDefault() {
+        return s_singleton;
+    }
 
-	private final Type ITERATOR = Type.getType(Iterator.class);
+    private final Type                    ITERATOR  = Type.getType(Iterator.class);
 
-	public static TypeMapper getDefault()
-	{
-		return s_singleton;
-	}
+    private final HashMap<String, String> m_typeMap = new HashMap<String, String>();
 
-	public String getSQLType(GenericType type)
-	{
-		String sqlType = m_typeMap.get(type.getType().getDescriptor());
-		if(sqlType != null)
-			return sqlType;
+    private TypeMapper() {
+        // Primitives
+        //
+        addMap(boolean.class, "boolean");
+        addMap(Boolean.class, "boolean");
+        addMap(byte.class, "smallint");
+        addMap(Byte.class, "smallint");
+        addMap(char.class, "smallint");
+        addMap(Character.class, "smallint");
+        addMap(double.class, "double precision");
+        addMap(Double.class, "double precision");
+        addMap(float.class, "real");
+        addMap(Float.class, "real");
+        addMap(int.class, "integer");
+        addMap(Integer.class, "integer");
+        addMap(long.class, "bigint");
+        addMap(Long.class, "bigint");
+        addMap(short.class, "smallint");
+        addMap(Short.class, "smallint");
 
-		// The type descriptor might contain significant
-		// generic info.
-		//
-		GenericType gType = type.getGeneric();
-		if(gType == null)
-			throw new UnknownTypeException(type);
+        // Known common mappings
+        //
+        addMap(String.class, "varchar");
+        addMap(java.util.Date.class, "timestamp");
+        addMap(Timestamp.class, "timestamp");
+        addMap(Time.class, "time");
+        addMap(java.sql.Date.class, "date");
+        addMap(BigInteger.class, "numeric");
+        addMap(BigDecimal.class, "numeric");
 
-		if(type.getType().equals(ITERATOR))
-			return "SET OF " + this.getSQLType(gType);
+        addMap(Integer[].class, "int[]");
+        addMap(int[].class, "int[]");
+        addMap(short[].class, "shortint[]");
+        addMap(Short[].class, "shortint[]");
+        addMap(float[].class, "real[]");
+        addMap(Float[].class, "real[]");
+        addMap(long[].class, "bigint[]");
+        addMap(Long[].class, "bigint[]");
+        addMap(double[].class, "double precision[]");
+        addMap(Double[].class, "double precision[]");
 
-		throw new UnknownTypeException(type);
-	}
+        addMap(byte[].class, "bytea");
 
-	private TypeMapper()
-	{
-		// Primitives
-		//
-		this.addMap(boolean.class, "boolean");
-		this.addMap(Boolean.class, "boolean");
-		this.addMap(byte.class, "smallint");
-		this.addMap(Byte.class, "smallint");
-		this.addMap(char.class, "smallint");
-		this.addMap(Character.class, "smallint");
-		this.addMap(double.class, "double precision");
-		this.addMap(Double.class, "double precision");
-		this.addMap(float.class, "real");
-		this.addMap(Float.class, "real");
-		this.addMap(int.class, "integer");
-		this.addMap(Integer.class, "integer");
-		this.addMap(long.class, "bigint");
-		this.addMap(Long.class, "bigint");
-		this.addMap(short.class, "smallint");
-		this.addMap(Short.class, "smallint");
+        m_typeMap.put("V", "void");
+    }
 
-		// Known common mappings
-		//
-		this.addMap(String.class, "varchar");
-		this.addMap(java.util.Date.class, "timestamp");
-		this.addMap(Timestamp.class, "timestamp");
-		this.addMap(Time.class, "time");
-		this.addMap(java.sql.Date.class, "date");
-		this.addMap(BigInteger.class, "numeric");
-		this.addMap(BigDecimal.class, "numeric");
-		
-		this.addMap(Integer[].class, "int[]");
-		this.addMap(int[].class, "int[]");
-		this.addMap(short[].class, "shortint[]");
-		this.addMap(Short[].class, "shortint[]");
-		this.addMap(float[].class, "real[]");
-		this.addMap(Float[].class, "real[]");
-		this.addMap(long[].class, "bigint[]");
-		this.addMap(Long[].class, "bigint[]");
-		this.addMap(double[].class, "double precision[]");
-		this.addMap(Double[].class, "double precision[]");
+    public String getSQLType(GenericType type) {
+        String sqlType = m_typeMap.get(type.getType().getDescriptor());
+        if (sqlType != null) {
+            return sqlType;
+        }
 
-		this.addMap(byte[].class, "bytea");
+        // The type descriptor might contain significant
+        // generic info.
+        //
+        GenericType gType = type.getGeneric();
+        if (gType == null) {
+            throw new UnknownTypeException(type);
+        }
 
-		m_typeMap.put("V", "void");
-	}
+        if (type.getType().equals(ITERATOR)) {
+            return "SET OF " + getSQLType(gType);
+        }
 
-	private void addMap(Class c, String sqlType)
-	{
-		m_typeMap.put(Type.getDescriptor(c), sqlType);
-	}
+        throw new UnknownTypeException(type);
+    }
+
+    private void addMap(Class<?> c, String sqlType) {
+        m_typeMap.put(Type.getDescriptor(c), sqlType);
+    }
 }

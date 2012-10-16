@@ -13,36 +13,32 @@ import java.sql.Statement;
 
 import org.postgresql.pljava.ResultSetHandle;
 
-public class Users implements ResultSetHandle
-{
-	private final String m_filter;
-	private Statement m_statement;
+public class Users implements ResultSetHandle {
+    public static ResultSetHandle listNonSupers() {
+        return new Users("usesuper = false");
+    }
 
-	public Users(String filter)
-	{
-		m_filter = filter;
-	}
+    public static ResultSetHandle listSupers() {
+        return new Users("usesuper = true");
+    }
 
-	public ResultSet getResultSet()
-	throws SQLException
-	{
-		m_statement = DriverManager.getConnection("jdbc:default:connection").createStatement();
-		return m_statement.executeQuery("SELECT * FROM pg_user WHERE " + m_filter);
-	}
+    private final String m_filter;
 
-	public void close()
-	throws SQLException
-	{
-		m_statement.close();
-	}
+    private Statement    m_statement;
 
-	public static ResultSetHandle listSupers()
-	{
-		return new Users("usesuper = true");
-	}
+    public Users(String filter) {
+        m_filter = filter;
+    }
 
-	public static ResultSetHandle listNonSupers()
-	{
-		return new Users("usesuper = false");
-	}
+    @Override
+    public void close() throws SQLException {
+        m_statement.close();
+    }
+
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        m_statement = DriverManager.getConnection("jdbc:default:connection").createStatement();
+        return m_statement.executeQuery("SELECT * FROM pg_user WHERE "
+                                        + m_filter);
+    }
 }
