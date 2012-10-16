@@ -7,8 +7,11 @@
 package org.postgresql.pljava.sqlgen;
 
 import java.io.PrintWriter;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
@@ -21,9 +24,11 @@ import org.postgresql.pljava.annotation.Function;
  */
 public class FunctionVisitor extends EmptyVisitor {
 
+    private static final String       TRIGGERS         = "triggers";
+
     private final String              m_className;
 
-    private String                    m_language    = "java";
+    private String                    m_language       = "java";
 
     private final String              m_methodDescriptor;
 
@@ -33,20 +38,22 @@ public class FunctionVisitor extends EmptyVisitor {
 
     private String                    complexReturnType;
 
-    private String                    m_name        = "";
+    private String                    m_name           = "";
 
-    private Function.OnNullInput      m_onNullInput = Function.OnNullInput.CALLED;
+    private Function.OnNullInput      m_onNullInput    = Function.OnNullInput.CALLED;
 
-    private String                    m_schema      = "";
+    private String                    m_schema         = "";
 
-    private Function.Security         m_security    = Function.Security.INVOKER;
+    private Function.Security         m_security       = Function.Security.INVOKER;
 
     /**
      * The Triggers that will call this function (if any).
      */
-    private ArrayList<TriggerVisitor> m_triggers    = new ArrayList<>();
+    private ArrayList<TriggerVisitor> m_triggers       = new ArrayList<>();
 
-    private Function.Type             m_type        = Function.Type.VOLATILE;
+    private Function.Type             m_type           = Function.Type.VOLATILE;
+
+    private Map<Integer, String>      parameterMapping = new HashMap<>();
 
     FunctionVisitor(String className, String methodName,
                     String methodDescriptor, String methodSignature) {
@@ -109,23 +116,27 @@ public class FunctionVisitor extends EmptyVisitor {
         writer.print(getClassName());
         writer.print('.');
         writer.print(getMethodName());
-        writer.print('(');
 
         String[] paramTypes = getParameterTypes();
-        top = paramTypes.length;
-        if (top > 0) {
-            writer.print(paramTypes[0]);
-            for (int idx = 1; idx < top; ++idx) {
-                writer.print(',');
-                writer.print(paramTypes[idx]);
+        if (paramTypes.length > 0
+            && !ResultSet.class.getCanonicalName().equals(paramTypes[0])) {
+            writer.print('(');
+
+            top = paramTypes.length;
+            if (top > 0) {
+                writer.print(paramTypes[0]);
+                for (int idx = 1; idx < top; ++idx) {
+                    writer.print(',');
+                    writer.print(paramTypes[idx]);
+                }
             }
+            writer.print(")");
         }
-        writer.print(")'");
-        writer.println(";");
+        writer.println("';");
     }
 
     public String[] getArgumentTypes() {
-        if (m_triggers.isEmpty()) {
+        if (!m_triggers.isEmpty()) {
             return new String[0];
         }
 
@@ -222,7 +233,7 @@ public class FunctionVisitor extends EmptyVisitor {
 
     @Override
     public AnnotationVisitor visitArray(String name) {
-        if (name.equals("triggers")) {
+        if (name.equals(TRIGGERS)) {
             return new EmptyVisitor() {
                 @Override
                 public AnnotationVisitor visitAnnotation(String paramString1,
@@ -269,5 +280,23 @@ public class FunctionVisitor extends EmptyVisitor {
 
     public void setComplexReturnType(String complexReturnType) {
         this.complexReturnType = complexReturnType;
+    }
+
+    @Override
+    public AnnotationVisitor visitParameterAnnotation(final int parameter,
+                                                      String desc,
+                                                      boolean visible) {
+        if (PLJavaClassVisitor.COMPLEX_TYPE.equals(desc)) {
+            return new EmptyVisitor() {
+                @Override
+                public void visit(String name, Object value) {
+                    if ("value".equals(name)) {
+                        parameterMapping.put(parameter, (String) value);
+                    }
+                }
+
+            };
+        }
+        return null;
     }
 }

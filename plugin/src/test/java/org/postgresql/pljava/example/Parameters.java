@@ -59,6 +59,7 @@ public class Parameters {
         return nullCount;
     }
 
+    @Function
     public static int countNulls(ResultSet input) throws SQLException {
         int nullCount = 0;
         int top = input.getMetaData().getColumnCount();

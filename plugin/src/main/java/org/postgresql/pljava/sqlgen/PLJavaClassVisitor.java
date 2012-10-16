@@ -51,7 +51,7 @@ public class PLJavaClassVisitor extends EmptyVisitor {
                 return new EmptyVisitor() {
                     @Override
                     public void visit(String name, Object value) {
-                        if ("type".equals(name)) {
+                        if ("value".equals(name)) {
                             function.setComplexReturnType((String) value);
                         }
                     }
@@ -65,8 +65,8 @@ public class PLJavaClassVisitor extends EmptyVisitor {
         }
     }
 
-    private static final String              FUNCTION     = Type.getDescriptor(Function.class);
-    private static final String              COMPLEX_TYPE = Type.getDescriptor(ComplexType.class);
+    protected static final String            FUNCTION     = Type.getDescriptor(Function.class);
+    protected static final String            COMPLEX_TYPE = Type.getDescriptor(ComplexType.class);
 
     private String                           m_className;
 

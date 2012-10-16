@@ -8,6 +8,7 @@ package org.postgresql.pljava.sqlgen;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.ResultSet;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -23,10 +24,12 @@ import org.postgresql.pljava.ResultSetProvider;
 public class TypeMapper {
 
     private static final Type                    ITERATOR            = Type.getType(Iterator.class);
-    private static String                        RESULT_SET_PROVIDER = "L"
-                                                                       + ResultSetProvider.class.getCanonicalName().replace('.',
-                                                                                                                            '/')
-                                                                       + ";";
+    private static String                        RESULT_SET_PROVIDER = String.format("L%s;",
+                                                                                     ResultSetProvider.class.getCanonicalName().replace('.',
+                                                                                                                                        '/'));
+    protected static String                      RESULT_SET          = String.format("L%s;",
+                                                                                     ResultSet.class.getCanonicalName().replace('.',
+                                                                                                                                '/'));
 
     private static final HashMap<String, String> TYPE_MAP            = new HashMap<String, String>();
 
@@ -74,6 +77,7 @@ public class TypeMapper {
         addMap(byte[].class, "bytea");
 
         TYPE_MAP.put("V", "void");
+        TYPE_MAP.put(RESULT_SET, "record");
     }
 
     private TypeMapper() {
@@ -94,6 +98,9 @@ public class TypeMapper {
         //
         GenericType gType = type.getGeneric();
         if (gType == null) {
+            if (complexType != null) {
+                return complexType;
+            }
             throw new UnknownTypeException(type);
         }
 

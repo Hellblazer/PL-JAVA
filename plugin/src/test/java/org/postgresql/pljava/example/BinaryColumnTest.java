@@ -19,7 +19,7 @@ import org.postgresql.pljava.annotation.Function;
 
 public class BinaryColumnTest implements ResultSetProvider {
     @Function
-    @ComplexType(type = "javatest.BinaryColumnPair")
+    @ComplexType("javatest.BinaryColumnPair")
     public static ResultSetProvider getBinaryPairs() {
         return new BinaryColumnTest();
     }

@@ -15,18 +15,21 @@ import java.sql.SQLInput;
 import java.sql.SQLOutput;
 import java.util.logging.Logger;
 
+import org.postgresql.pljava.annotation.ComplexType;
 import org.postgresql.pljava.annotation.Function;
 
 public class ComplexScalar implements SQLData {
     private static Logger s_logger = Logger.getAnonymousLogger();
 
     @Function
-    public static ComplexScalar logAndReturn(ComplexScalar cpl) {
+    @ComplexType("javatest.complex")
+    public static ComplexScalar logAndReturn(@ComplexType("javatest.complex") ComplexScalar cpl) {
         s_logger.info(cpl.getSQLTypeName() + cpl);
         return cpl;
     }
 
     @Function
+    @ComplexType("javatest.complex")
     public static ComplexScalar parse(String input, String typeName)
                                                                     throws SQLException {
         try {
