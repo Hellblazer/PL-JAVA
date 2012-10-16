@@ -11,7 +11,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import org.postgresql.pljava.annotation.Function;
+
 public class RandomInts implements Iterator<Object> {
+    @Function
     public static Iterator<?> createIterator(int rowCount) throws SQLException {
         return new RandomInts(rowCount);
     }

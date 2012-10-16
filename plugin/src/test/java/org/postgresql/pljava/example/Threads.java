@@ -9,6 +9,8 @@ package org.postgresql.pljava.example;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.postgresql.pljava.annotation.Function;
+
 /**
  * This class contains thread related methods.
  * 
@@ -49,6 +51,7 @@ public class Threads {
 
     private final static String s_lockTwo = "lock number two";
 
+    @Function
     public static void forceDeadlock() {
         // Cause a deadlock.
         //

@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.postgresql.pljava.ResultSetHandle;
+import org.postgresql.pljava.annotation.Function;
 
 /**
  * This implementation uses another function that returns a set of a complex
@@ -20,6 +21,7 @@ import org.postgresql.pljava.ResultSetHandle;
  * @author Thomas Hallgren
  */
 public class UsingPropertiesAsResultSet implements ResultSetHandle {
+    @Function
     public static ResultSetHandle getProperties() throws SQLException {
         return new UsingPropertiesAsResultSet();
     }

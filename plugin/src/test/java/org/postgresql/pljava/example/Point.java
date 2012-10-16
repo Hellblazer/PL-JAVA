@@ -12,9 +12,12 @@ import java.sql.SQLInput;
 import java.sql.SQLOutput;
 import java.util.logging.Logger;
 
+import org.postgresql.pljava.annotation.Function;
+
 public class Point implements SQLData {
     private static Logger s_logger = Logger.getAnonymousLogger();
 
+    @Function
     public static Point logAndReturn(Point cpl) {
         s_logger.info(cpl.getSQLTypeName() + cpl);
         return cpl;

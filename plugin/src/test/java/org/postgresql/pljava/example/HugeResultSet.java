@@ -13,8 +13,10 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import org.postgresql.pljava.ResultSetProvider;
+import org.postgresql.pljava.annotation.Function;
 
 public class HugeResultSet implements ResultSetProvider {
+    @Function
     public static ResultSetProvider executeSelect(int rowCount)
                                                                throws SQLException {
         return new HugeResultSet(rowCount);

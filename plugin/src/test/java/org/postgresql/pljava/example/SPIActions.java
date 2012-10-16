@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import org.postgresql.pljava.SavepointListener;
 import org.postgresql.pljava.Session;
 import org.postgresql.pljava.SessionManager;
+import org.postgresql.pljava.annotation.Function;
 
 /**
  * Some methods used for testing the SPI JDBC driver.
@@ -64,6 +65,7 @@ public class SPIActions {
                                                              }
                                                          };
 
+    @Function
     public static String getDateAsString() throws SQLException {
         ResultSet rs = null;
         Statement stmt = null;
@@ -86,6 +88,7 @@ public class SPIActions {
         }
     }
 
+    @Function
     public static String getTimeAsString() throws SQLException {
         ResultSet rs = null;
         Statement stmt = null;
@@ -108,6 +111,7 @@ public class SPIActions {
         }
     }
 
+    @Function
     public static int maxFromSetReturnExample(int base, int increment)
                                                                       throws SQLException {
         int max = Integer.MIN_VALUE;
@@ -142,6 +146,7 @@ public class SPIActions {
      * Test of bug #1556
      * 
      */
+    @Function
     public static void nestedStatements(int innerCount) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:default:connection");
         Statement statement = connection.createStatement();
@@ -176,6 +181,7 @@ public class SPIActions {
         connection.close();
     }
 
+    @Function
     public static int testSavepointSanity() throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:default:connection");
 
@@ -207,6 +213,7 @@ public class SPIActions {
                                "SAVEPOINT through SQL succeeded. That's bad news!");
     }
 
+    @Function
     public static int testTransactionRecovery() throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:default:connection");
 
@@ -254,6 +261,7 @@ public class SPIActions {
         return -1;
     }
 
+    @Function
     public static int transferPeopleWithSalary(int salary) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:default:connection");
         PreparedStatement select = null;

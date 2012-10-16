@@ -18,11 +18,13 @@ import java.util.Comparator;
 import java.util.logging.Logger;
 
 import org.postgresql.pljava.ResultSetProvider;
+import org.postgresql.pljava.annotation.Function;
 
 /**
  * @author Filip Hrbek
  */
 public class MetaDataBooleans implements ResultSetProvider {
+    @Function
     public static ResultSetProvider getDatabaseMetaDataBooleans()
                                                                  throws SQLException {
         try {

@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.postgresql.pljava.annotation.Function;
+
 /**
  * This implementation uses another function that returns a set of a complex
  * type, concatenates the name and value of that type and returns this as a set
@@ -23,6 +25,7 @@ import java.util.Iterator;
  * @author Thomas Hallgren
  */
 public class UsingPropertiesAsScalarSet {
+    @Function
     public static Iterator<String> getProperties() throws SQLException {
         StringBuffer bld = new StringBuffer();
         ArrayList<String> list = new ArrayList<String>();

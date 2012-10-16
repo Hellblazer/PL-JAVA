@@ -19,10 +19,13 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.postgresql.pljava.annotation.Function;
+
 /**
  * @author Filip Hrbek
  */
 public class MetaDataTest {
+    @Function
     public static Iterator<String> callMetaDataMethod(String methodCall)
                                                                         throws SQLException {
         return new MetaDataTest(methodCall).iterator();

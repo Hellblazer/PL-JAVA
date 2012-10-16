@@ -12,9 +12,12 @@ import java.sql.SQLInput;
 import java.sql.SQLOutput;
 import java.util.logging.Logger;
 
+import org.postgresql.pljava.annotation.Function;
+
 public class ComplexTuple implements SQLData {
     private static Logger s_logger = Logger.getAnonymousLogger();
 
+    @Function
     public static ComplexTuple logAndReturn(ComplexTuple cpl) {
         s_logger.info(cpl.getSQLTypeName() + "(" + cpl.m_x + ", " + cpl.m_y
                       + ")");

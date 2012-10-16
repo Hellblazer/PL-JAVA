@@ -15,10 +15,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.postgresql.pljava.annotation.Function;
+
 /**
  * @author Filip Hrbek
  */
 public class ResultSetTest {
+    @Function
     public static Iterator<String> executeSelect(String selectSQL)
                                                                   throws SQLException {
         if (!selectSQL.toUpperCase().trim().startsWith("SELECT ")) {

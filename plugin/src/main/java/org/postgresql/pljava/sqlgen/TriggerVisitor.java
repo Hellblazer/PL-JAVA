@@ -6,6 +6,7 @@
  */
 package org.postgresql.pljava.sqlgen;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,5 +167,48 @@ public class TriggerVisitor extends EmptyVisitor {
 
     final Trigger.When getWhen() {
         return m_when;
+    }
+
+    /**
+     * @param functionSchema
+     * @param function
+     * @param writer
+     */
+    public void emit(String functionSchema, String function, PrintWriter writer) {
+        writer.print("CREATE OR REPLACE ");
+        if (!m_schema.isEmpty()) {
+            writer.print(m_schema);
+            writer.print(".");
+        }
+        writer.println(m_name);
+        writer.print("\t");
+        writer.print(m_when);
+        int count = 0;
+        for (Trigger.Event event : m_events) {
+            writer.print(" ");
+            writer.println(event);
+            if (count++ != m_events.size()) {
+                writer.print(" OR");
+            }
+        }
+        writer.println();
+        writer.print("\t");
+        writer.print("FOR EACH ");
+        writer.print(m_scope);
+        writer.print(" EXECUTE ");
+        if (!functionSchema.isEmpty()) {
+            writer.print(functionSchema);
+            writer.print(".");
+        }
+        writer.print(function);
+        writer.print("(");
+        count = 0;
+        for (String argument : m_arguments) {
+            writer.print(argument);
+            if (count++ != m_arguments.size()) {
+                writer.print(", ");
+            }
+        }
+        writer.println(");");
     }
 }

@@ -14,8 +14,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.postgresql.pljava.ResultSetProvider;
+import org.postgresql.pljava.annotation.ComplexType;
+import org.postgresql.pljava.annotation.Function;
 
 public class BinaryColumnTest implements ResultSetProvider {
+    @Function
+    @ComplexType(type = "javatest.BinaryColumnPair")
     public static ResultSetProvider getBinaryPairs() {
         return new BinaryColumnTest();
     }

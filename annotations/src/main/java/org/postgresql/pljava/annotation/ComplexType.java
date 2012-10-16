@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * 
  */
 @Documented
-@Target({ ElementType.PARAMETER })
+@Target({ ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.CLASS)
 public @interface ComplexType {
     String type();

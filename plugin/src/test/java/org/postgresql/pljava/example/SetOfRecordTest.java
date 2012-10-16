@@ -13,8 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.postgresql.pljava.ResultSetHandle;
+import org.postgresql.pljava.annotation.Function;
 
 public class SetOfRecordTest implements ResultSetHandle {
+    @Function
     public static ResultSetHandle executeSelect(String selectSQL)
                                                                  throws SQLException {
         return new SetOfRecordTest(selectSQL);

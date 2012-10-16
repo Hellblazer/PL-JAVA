@@ -9,7 +9,10 @@ package org.postgresql.pljava.example;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.postgresql.pljava.annotation.Function;
+
 public class LoggerTest {
+    @Function
     public static void logMessage(String logLevel, String message) {
         Logger.getAnonymousLogger().log(Level.parse(logLevel), message);
     }

@@ -36,4 +36,6 @@ public @interface Trigger {
     String table();
 
     When when();
+
+    String[] arguments() default {};
 }

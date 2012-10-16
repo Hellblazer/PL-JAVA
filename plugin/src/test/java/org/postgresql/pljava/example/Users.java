@@ -12,12 +12,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.postgresql.pljava.ResultSetHandle;
+import org.postgresql.pljava.annotation.Function;
 
 public class Users implements ResultSetHandle {
+    @Function
     public static ResultSetHandle listNonSupers() {
         return new Users("usesuper = false");
     }
 
+    @Function
     public static ResultSetHandle listSupers() {
         return new Users("usesuper = true");
     }

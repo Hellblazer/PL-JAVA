@@ -14,23 +14,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.objectweb.asm.Type;
+import org.postgresql.pljava.ResultSetProvider;
 
 /**
  * @author Thomas Hallgren
  */
 
 public class TypeMapper {
-    private static final TypeMapper s_singleton = new TypeMapper();
 
-    public static TypeMapper getDefault() {
-        return s_singleton;
-    }
+    private static final Type                    ITERATOR            = Type.getType(Iterator.class);
+    private static String                        RESULT_SET_PROVIDER = "L"
+                                                                       + ResultSetProvider.class.getCanonicalName().replace('.',
+                                                                                                                            '/')
+                                                                       + ";";
 
-    private final Type                    ITERATOR  = Type.getType(Iterator.class);
+    private static final HashMap<String, String> TYPE_MAP            = new HashMap<String, String>();
 
-    private final HashMap<String, String> m_typeMap = new HashMap<String, String>();
-
-    private TypeMapper() {
+    static {
         // Primitives
         //
         addMap(boolean.class, "boolean");
@@ -73,11 +73,18 @@ public class TypeMapper {
 
         addMap(byte[].class, "bytea");
 
-        m_typeMap.put("V", "void");
+        TYPE_MAP.put("V", "void");
     }
 
-    public String getSQLType(GenericType type) {
-        String sqlType = m_typeMap.get(type.getType().getDescriptor());
+    private TypeMapper() {
+    }
+
+    public static String getSQLType(GenericType type, String complexType) {
+        String descriptor = type.getType().getDescriptor();
+        if (RESULT_SET_PROVIDER.equals(descriptor)) {
+            return String.format("SETOF %s", complexType);
+        }
+        String sqlType = TYPE_MAP.get(descriptor);
         if (sqlType != null) {
             return sqlType;
         }
@@ -91,13 +98,13 @@ public class TypeMapper {
         }
 
         if (type.getType().equals(ITERATOR)) {
-            return "SET OF " + getSQLType(gType);
+            return "SET OF " + getSQLType(gType, complexType);
         }
 
         throw new UnknownTypeException(type);
     }
 
-    private void addMap(Class<?> c, String sqlType) {
-        m_typeMap.put(Type.getDescriptor(c), sqlType);
+    private static void addMap(Class<?> c, String sqlType) {
+        TYPE_MAP.put(Type.getDescriptor(c), sqlType);
     }
 }

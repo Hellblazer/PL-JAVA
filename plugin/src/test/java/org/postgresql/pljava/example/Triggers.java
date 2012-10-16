@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import org.postgresql.pljava.SessionManager;
 import org.postgresql.pljava.TriggerData;
 import org.postgresql.pljava.TriggerException;
+import org.postgresql.pljava.annotation.Function;
 
 /**
  * This class contains some triggers that I found written in C under the
@@ -27,12 +28,14 @@ import org.postgresql.pljava.TriggerException;
  * @author Thomas Hallgren
  */
 public class Triggers {
+    @Function
     public static void afterUsernameInsert(TriggerData td) throws SQLException {
         Logger log = Logger.getAnonymousLogger();
         log.info("After username insert, oid of tuple = "
                  + td.getNew().getInt("oid"));
     }
 
+    @Function
     public static void afterUsernameUpdate(TriggerData td) throws SQLException {
         Logger log = Logger.getAnonymousLogger();
         if (td.isFiredForStatement()) {
@@ -63,6 +66,7 @@ public class Triggers {
     /**
      * insert user name in response to a trigger.
      */
+    @Function
     public static void insertUsername(TriggerData td) throws SQLException {
         if (td.isFiredForStatement()) {
             throw new TriggerException(td, "can't process STATEMENT events");
@@ -87,6 +91,7 @@ public class Triggers {
         }
     }
 
+    @Function
     public static void leakStatements(TriggerData td) throws SQLException {
         StringBuffer buf = new StringBuffer();
 
@@ -138,6 +143,7 @@ public class Triggers {
     /**
      * Update a modification time when the row is updated.
      */
+    @Function
     public static void moddatetime(TriggerData td) throws SQLException {
         if (td.isFiredForStatement()) {
             throw new TriggerException(td, "can't process STATEMENT events");

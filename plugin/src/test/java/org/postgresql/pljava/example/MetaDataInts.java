@@ -19,11 +19,13 @@ import java.util.Comparator;
 import java.util.logging.Logger;
 
 import org.postgresql.pljava.ResultSetProvider;
+import org.postgresql.pljava.annotation.Function;
 
 /**
  * @author Filip Hrbek
  */
 public class MetaDataInts implements ResultSetProvider {
+    @Function
     public static ResultSetProvider getDatabaseMetaDataInts()
                                                              throws SQLException {
         try {

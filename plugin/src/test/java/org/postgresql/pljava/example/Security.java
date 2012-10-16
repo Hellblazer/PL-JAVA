@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.postgresql.pljava.annotation.Function;
+
 public class Security {
     /**
      * The following method should fail if the language in use is untrusted.
@@ -17,6 +19,7 @@ public class Security {
      * @return The name of a created temporary file.
      * @throws SQLException
      */
+    @Function
     public static String createTempFile() throws SQLException {
         try {
             File tmp = File.createTempFile("pljava", ".test");

@@ -11,11 +11,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.postgresql.pljava.ResultSetProvider;
+import org.postgresql.pljava.annotation.Function;
 
 /**
  * @author Thomas Hallgren
  */
 public class TupleReturn implements ResultSetProvider {
+    @Function
     public static String makeString(ResultSet _testSetReturn)
                                                              throws SQLException {
         int base = _testSetReturn.getInt(1);
@@ -25,11 +27,13 @@ public class TupleReturn implements ResultSetProvider {
                + "\", ctime = \"" + ctime + "\"";
     }
 
+    @Function
     public static ResultSetProvider setReturn(int base, int increment)
                                                                       throws SQLException {
         return new TupleReturn(base, increment);
     }
 
+    @Function
     public static boolean tupleReturn(int base, int increment,
                                       ResultSet receiver) throws SQLException {
         receiver.updateInt(1, base);
@@ -38,6 +42,7 @@ public class TupleReturn implements ResultSetProvider {
         return true;
     }
 
+    @Function
     public static boolean tupleReturn(Integer base, Integer increment,
                                       ResultSet receiver) throws SQLException {
         if (base == null) {

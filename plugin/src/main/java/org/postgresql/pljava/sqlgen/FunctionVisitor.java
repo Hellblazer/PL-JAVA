@@ -31,6 +31,8 @@ public class FunctionVisitor extends EmptyVisitor {
 
     private final String              m_methodSignature;
 
+    private String                    complexReturnType;
+
     private String                    m_name        = "";
 
     private Function.OnNullInput      m_onNullInput = Function.OnNullInput.CALLED;
@@ -42,7 +44,7 @@ public class FunctionVisitor extends EmptyVisitor {
     /**
      * The Triggers that will call this function (if any).
      */
-    private ArrayList<TriggerVisitor> m_triggers;
+    private ArrayList<TriggerVisitor> m_triggers    = new ArrayList<>();
 
     private Function.Type             m_type        = Function.Type.VOLATILE;
 
@@ -56,8 +58,21 @@ public class FunctionVisitor extends EmptyVisitor {
     }
 
     public void emitOn(PrintWriter writer) {
+        emitFunction(writer);
+        for (TriggerVisitor trigger : m_triggers) {
+            trigger.emit(m_schema, m_name, writer);
+        }
+    }
 
+    /**
+     * @param writer
+     */
+    protected void emitFunction(PrintWriter writer) {
         writer.print("CREATE OR REPLACE FUNCTION ");
+        if (!m_schema.isEmpty()) {
+            writer.print(m_schema);
+            writer.print(".");
+        }
         writer.print(getName());
         writer.print('(');
         String[] argTypes = getArgumentTypes();
@@ -106,14 +121,14 @@ public class FunctionVisitor extends EmptyVisitor {
             }
         }
         writer.print(")'");
+        writer.println(";");
     }
 
     public String[] getArgumentTypes() {
-        if (m_triggers != null) {
+        if (m_triggers.isEmpty()) {
             return new String[0];
         }
 
-        TypeMapper mapper = TypeMapper.getDefault();
         String sign = m_methodSignature == null ? m_methodDescriptor
                                                : m_methodSignature;
         GenericType[] argTypes = GenericType.getArgumentTypes(sign);
@@ -121,7 +136,8 @@ public class FunctionVisitor extends EmptyVisitor {
 
         String[] sqlTypes = new String[idx];
         while (--idx >= 0) {
-            sqlTypes[idx] = mapper.getSQLType(argTypes[idx]);
+            sqlTypes[idx] = TypeMapper.getSQLType(argTypes[idx],
+                                                  complexReturnType);
         }
         return sqlTypes;
     }
@@ -165,13 +181,14 @@ public class FunctionVisitor extends EmptyVisitor {
     }
 
     public String getReturnType() {
-        if (m_triggers != null) {
+        if (!m_triggers.isEmpty()) {
             return "trigger";
         }
 
         String sign = m_methodSignature == null ? m_methodDescriptor
                                                : m_methodSignature;
-        return TypeMapper.getDefault().getSQLType(GenericType.getReturnType(sign));
+        return TypeMapper.getSQLType(GenericType.getReturnType(sign),
+                                     complexReturnType);
     }
 
     public final String getSchema() {
@@ -206,9 +223,6 @@ public class FunctionVisitor extends EmptyVisitor {
     @Override
     public AnnotationVisitor visitArray(String name) {
         if (name.equals("triggers")) {
-            if (m_triggers == null) {
-                m_triggers = new ArrayList<TriggerVisitor>();
-            }
             return new EmptyVisitor() {
                 @Override
                 public AnnotationVisitor visitAnnotation(String paramString1,
@@ -226,7 +240,7 @@ public class FunctionVisitor extends EmptyVisitor {
     public void visitEnd() {
         // Verify that trigger functions have correct signature
         //
-        if (m_triggers != null) {
+        if (!m_triggers.isEmpty()) {
             String desc = getMethodDescriptor();
             Type[] argTypes = Type.getArgumentTypes(desc);
             if (!(argTypes.length == 1
@@ -247,5 +261,13 @@ public class FunctionVisitor extends EmptyVisitor {
         } else {
             throw new UnrecognizedAttributeException(name);
         }
+    }
+
+    public String getComplexReturnType() {
+        return complexReturnType;
+    }
+
+    public void setComplexReturnType(String complexReturnType) {
+        this.complexReturnType = complexReturnType;
     }
 }
